@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ResetPasswordRequest;
+use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -12,6 +13,8 @@ use Illuminate\Validation\ValidationException;
 
 class PasswordResetController extends Controller
 {
+    use ApiResponse;
+
     /**
      * Send password reset link to user's email.
      */
@@ -26,10 +29,7 @@ class PasswordResetController extends Controller
         );
 
         if ($status === Password::RESET_LINK_SENT) {
-            return response()->json([
-                'success' => true,
-                'message' => 'Password reset link sent to your email',
-            ]);
+            return $this->successResponse(null, 'Password reset link sent to your email');
         }
 
         throw ValidationException::withMessages([
@@ -55,10 +55,7 @@ class PasswordResetController extends Controller
         );
 
         if ($status === Password::PASSWORD_RESET) {
-            return response()->json([
-                'success' => true,
-                'message' => 'Password reset successfully',
-            ]);
+            return $this->successResponse(null, 'Password reset successfully');
         }
 
         throw ValidationException::withMessages([

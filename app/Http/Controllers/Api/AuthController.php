@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Models\User;
+use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -13,6 +14,8 @@ use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
+    use ApiResponse;
+
     /**
      * Register a new user.
      */
@@ -26,20 +29,16 @@ class AuthController extends Controller
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
-        return response()->json([
-            'success' => true,
-            'message' => 'User registered successfully',
-            'data' => [
-                'user' => [
-                    'id' => $user->id,
-                    'name' => $user->name,
-                    'email' => $user->email,
-                    'created_at' => $user->created_at,
-                ],
-                'access_token' => $token,
-                'token_type' => 'Bearer',
+        return $this->createdResponse([
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'created_at' => $user->created_at,
             ],
-        ], 201);
+            'access_token' => $token,
+            'token_type' => 'Bearer',
+        ], 'User registered successfully');
     }
 
     /**
@@ -60,19 +59,15 @@ class AuthController extends Controller
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Login successful',
-            'data' => [
-                'user' => [
-                    'id' => $user->id,
-                    'name' => $user->name,
-                    'email' => $user->email,
-                ],
-                'access_token' => $token,
-                'token_type' => 'Bearer',
+        return $this->successResponse([
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
             ],
-        ]);
+            'access_token' => $token,
+            'token_type' => 'Bearer',
+        ], 'Login successful');
     }
 
     /**
@@ -82,10 +77,7 @@ class AuthController extends Controller
     {
         $request->user()->currentAccessToken()->delete();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Logged out successfully',
-        ]);
+        return $this->successResponse(null, 'Logged out successfully');
     }
 
     /**
@@ -93,16 +85,13 @@ class AuthController extends Controller
      */
     public function user(Request $request): JsonResponse
     {
-        return response()->json([
-            'success' => true,
-            'data' => [
-                'user' => [
-                    'id' => $request->user()->id,
-                    'name' => $request->user()->name,
-                    'email' => $request->user()->email,
-                    'email_verified_at' => $request->user()->email_verified_at,
-                    'created_at' => $request->user()->created_at,
-                ],
+        return $this->successResponse([
+            'user' => [
+                'id' => $request->user()->id,
+                'name' => $request->user()->name,
+                'email' => $request->user()->email,
+                'email_verified_at' => $request->user()->email_verified_at,
+                'created_at' => $request->user()->created_at,
             ],
         ]);
     }
@@ -120,13 +109,9 @@ class AuthController extends Controller
         // Create new token
         $token = $user->createToken('auth_token')->plainTextToken;
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Token refreshed successfully',
-            'data' => [
-                'access_token' => $token,
-                'token_type' => 'Bearer',
-            ],
-        ]);
+        return $this->successResponse([
+            'access_token' => $token,
+            'token_type' => 'Bearer',
+        ], 'Token refreshed successfully');
     }
 }
