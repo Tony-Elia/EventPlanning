@@ -27,6 +27,14 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
+        // Assign default role (customer) or requested role if valid
+        $role = $request->input('role', 'customer');
+        if (in_array($role, ['customer', 'provider', 'admin'])) {
+            $user->assignRole($role);
+        } else {
+            $user->assignRole('customer');
+        }
+
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return $this->createdResponse([
@@ -34,6 +42,8 @@ class AuthController extends Controller
                 'id' => $user->id,
                 'name' => $user->name,
                 'email' => $user->email,
+                'roles' => $user->getRoleNames(),
+                'permissions' => $user->getAllPermissions()->pluck('name'),
                 'created_at' => $user->created_at,
             ],
             'access_token' => $token,
@@ -64,6 +74,8 @@ class AuthController extends Controller
                 'id' => $user->id,
                 'name' => $user->name,
                 'email' => $user->email,
+                'roles' => $user->getRoleNames(),
+                'permissions' => $user->getAllPermissions()->pluck('name'),
             ],
             'access_token' => $token,
             'token_type' => 'Bearer',
@@ -90,6 +102,8 @@ class AuthController extends Controller
                 'id' => $request->user()->id,
                 'name' => $request->user()->name,
                 'email' => $request->user()->email,
+                'roles' => $request->user()->getRoleNames(),
+                'permissions' => $request->user()->getAllPermissions()->pluck('name'),
                 'email_verified_at' => $request->user()->email_verified_at,
                 'created_at' => $request->user()->created_at,
             ],

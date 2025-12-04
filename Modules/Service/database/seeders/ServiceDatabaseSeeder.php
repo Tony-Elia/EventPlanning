@@ -11,6 +11,7 @@ class ServiceDatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // Module-specific seeders can be added here
         // $this->call([]);
     }
 }

@@ -14,7 +14,7 @@ trait ApiResponse
      * @param  int  $code
      * @return \Illuminate\Http\JsonResponse
      */
-    protected function successResponse($data = null, string $message = 'Success', int $code = 200): JsonResponse
+    public function successResponse($data = null, string $message = 'Success', int $code = 200): JsonResponse
     {
         $response = [
             'success' => true,
@@ -36,7 +36,7 @@ trait ApiResponse
      * @param  mixed  $errors
      * @return \Illuminate\Http\JsonResponse
      */
-    protected function errorResponse(string $message = 'Error', int $code = 400, $errors = null): JsonResponse
+    public function errorResponse(string $message = 'Error', int $code = 400, $errors = null): JsonResponse
     {
         $response = [
             'success' => false,
@@ -57,7 +57,7 @@ trait ApiResponse
      * @param  string  $message
      * @return \Illuminate\Http\JsonResponse
      */
-    protected function createdResponse($data, string $message = 'Resource created successfully'): JsonResponse
+    public function createdResponse($data, string $message = 'Resource created successfully'): JsonResponse
     {
         return $this->successResponse($data, $message, 201);
     }
@@ -67,7 +67,7 @@ trait ApiResponse
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    protected function noContentResponse(): JsonResponse
+    public function noContentResponse(): JsonResponse
     {
         return response()->json(null, 204);
     }
@@ -78,7 +78,7 @@ trait ApiResponse
      * @param  string  $message
      * @return \Illuminate\Http\JsonResponse
      */
-    protected function unauthorizedResponse(string $message = 'Unauthorized'): JsonResponse
+    public function unauthorizedResponse(string $message = 'Unauthorized'): JsonResponse
     {
         return $this->errorResponse($message, 401);
     }
@@ -89,7 +89,7 @@ trait ApiResponse
      * @param  string  $message
      * @return \Illuminate\Http\JsonResponse
      */
-    protected function forbiddenResponse(string $message = 'Forbidden'): JsonResponse
+    public function forbiddenResponse(string $message = 'Forbidden'): JsonResponse
     {
         return $this->errorResponse($message, 403);
     }
@@ -100,7 +100,7 @@ trait ApiResponse
      * @param  string  $message
      * @return \Illuminate\Http\JsonResponse
      */
-    protected function notFoundResponse(string $message = 'Resource not found'): JsonResponse
+    public function notFoundResponse(string $message = 'Resource not found'): JsonResponse
     {
         return $this->errorResponse($message, 404);
     }
@@ -112,7 +112,7 @@ trait ApiResponse
      * @param  string  $message
      * @return \Illuminate\Http\JsonResponse
      */
-    protected function validationErrorResponse($errors, string $message = 'Validation failed'): JsonResponse
+    public function validationErrorResponse($errors, string $message = 'Validation failed'): JsonResponse
     {
         return $this->errorResponse($message, 422, $errors);
     }
@@ -123,7 +123,7 @@ trait ApiResponse
      * @param  string  $message
      * @return \Illuminate\Http\JsonResponse
      */
-    protected function serverErrorResponse(string $message = 'Internal server error'): JsonResponse
+    public function serverErrorResponse(string $message = 'Internal server error'): JsonResponse
     {
         return $this->errorResponse($message, 500);
     }

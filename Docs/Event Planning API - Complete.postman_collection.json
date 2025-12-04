@@ -1,0 +1,1717 @@
+{
+	"info": {
+		"_postman_id": "66131cec-528e-4347-bfe6-23536d8f2e07",
+		"name": "Event Planning API - Complete",
+		"description": "Complete authentication API endpoints for Event Planning application using Laravel Sanctum.\n\n**Base URL:** http://eventplanning.test/api\n\n**How to use:**\n1. Import this file into Postman\n2. Run 'Register' or 'Login' - token will be auto-saved\n3. All protected endpoints will automatically use the saved token\n\n**Environment Variables (auto-managed):**\n- base_url: http://eventplanning.test/api\n- auth_token: (auto-saved after login/register)\n- user_id: (auto-saved)\n- user_email: (auto-saved)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "32063083"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Register",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.collectionVariables.set(\"auth_token\", jsonData.data.access_token);",
+									"    pm.collectionVariables.set(\"user_id\", jsonData.data.user.id);",
+									"    pm.collectionVariables.set(\"user_email\", jsonData.data.user.email);",
+									"    console.log(\"âœ… Token saved:\", jsonData.data.access_token);",
+									"    console.log(\"âœ… User ID:\", jsonData.data.user.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"John Doe\",\n    \"email\": \"john@example.com\",\n    \"password\": \"password123\",\n    \"password_confirmation\": \"password123\",\n    \"role\": \"customer\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/register",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
+						},
+						"description": "Register a new user account and receive an authentication token.\n\n**Auto-saves:** Token, User ID, Email"
+					},
+					"response": [
+						{
+							"name": "Success Response",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"John Doe\",\n    \"email\": \"john@example.com\",\n    \"password\": \"password123\",\n    \"password_confirmation\": \"password123\",\n    \"role\": \"customer\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/auth/register",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"auth",
+										"register"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"message\": \"User registered successfully\",\n    \"data\": {\n        \"user\": {\n            \"id\": 1,\n            \"name\": \"John Doe\",\n            \"email\": \"john@example.com\",\n            \"roles\": [\n                \"customer\"\n            ],\n            \"permissions\": [],\n            \"created_at\": \"2025-11-19T18:42:29.000000Z\"\n        },\n        \"access_token\": \"1|abc123xyz...\",\n        \"token_type\": \"Bearer\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.collectionVariables.set(\"auth_token\", jsonData.data.access_token);",
+									"    pm.collectionVariables.set(\"user_id\", jsonData.data.user.id);",
+									"    pm.collectionVariables.set(\"user_email\", jsonData.data.user.email);",
+									"    console.log(\"✅ Token saved:\", jsonData.data.access_token);",
+									"    console.log(\"✅ User ID:\", jsonData.data.user.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"john@example.com\",\n    \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						},
+						"description": "Authenticate user and receive access token.\n\n**Auto-saves:** Token, User ID, Email"
+					},
+					"response": [
+						{
+							"name": "Success Response",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"email\": \"john@example.com\",\n    \"password\": \"password123\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/auth/login",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"auth",
+										"login"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"message\": \"Login successful\",\n    \"data\": {\n        \"user\": {\n            \"id\": 1,\n            \"name\": \"John Doe\",\n            \"email\": \"john@example.com\",\n            \"roles\": [\n                \"customer\"\n            ],\n            \"permissions\": []\n        },\n        \"access_token\": \"2|xyz789...\",\n        \"token_type\": \"Bearer\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Get User",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/auth/user",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"user"
+							]
+						},
+						"description": "Get authenticated user information.\n\n**Requires:** Bearer token (auto-included)"
+					},
+					"response": [
+						{
+							"name": "Success Response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/auth/user",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"auth",
+										"user"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"data\": {\n        \"user\": {\n            \"id\": 1,\n            \"name\": \"John Doe\",\n            \"email\": \"john@example.com\",\n            \"roles\": [\n                \"customer\"\n            ],\n            \"permissions\": [],\n            \"email_verified_at\": null,\n            \"created_at\": \"2025-11-19T18:42:29.000000Z\"\n        }\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Refresh Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.collectionVariables.set(\"auth_token\", jsonData.data.access_token);",
+									"    console.log(\"âœ… Token refreshed:\", jsonData.data.access_token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/auth/refresh",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"refresh"
+							]
+						},
+						"description": "Revoke current token and issue a new one.\n\n**Auto-updates:** Token"
+					},
+					"response": [
+						{
+							"name": "Success Response",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/auth/refresh",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"auth",
+										"refresh"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"message\": \"Token refreshed successfully\",\n    \"data\": {\n        \"access_token\": \"3|newtoken123...\",\n        \"token_type\": \"Bearer\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Logout",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    pm.collectionVariables.unset(\"auth_token\");",
+									"    pm.collectionVariables.unset(\"user_id\");",
+									"    pm.collectionVariables.unset(\"user_email\");",
+									"    console.log(\"âœ… Token cleared - logged out\");",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/auth/logout",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"logout"
+							]
+						},
+						"description": "Logout user and revoke current access token.\n\n**Auto-clears:** All saved variables"
+					},
+					"response": [
+						{
+							"name": "Success Response",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/auth/logout",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"auth",
+										"logout"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"message\": \"Logged out successfully\"\n}"
+						}
+					]
+				}
+			],
+			"description": "Authentication endpoints for user registration, login, logout, and token management"
+		},
+		{
+			"name": "Password Reset",
+			"item": [
+				{
+					"name": "Forgot Password",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"john@example.com\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/forgot-password",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"forgot-password"
+							]
+						},
+						"description": "Send password reset link to user's email.\n\n**Note:** Requires mail configuration in .env"
+					},
+					"response": [
+						{
+							"name": "Success Response",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"email\": \"john@example.com\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/auth/forgot-password",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"auth",
+										"forgot-password"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"message\": \"Password reset link sent to your email\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Reset Password",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"token\": \"reset_token_from_email\",\n    \"email\": \"john@example.com\",\n    \"password\": \"NewPassword123!\",\n    \"password_confirmation\": \"NewPassword123!\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/reset-password",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"reset-password"
+							]
+						},
+						"description": "Reset user password using token from email.\n\n**Note:** Token comes from the reset email"
+					},
+					"response": [
+						{
+							"name": "Success Response",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"token\": \"reset_token_from_email\",\n    \"email\": \"john@example.com\",\n    \"password\": \"NewPassword123!\",\n    \"password_confirmation\": \"NewPassword123!\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/auth/reset-password",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"auth",
+										"reset-password"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"message\": \"Password reset successfully\"\n}"
+						}
+					]
+				}
+			],
+			"description": "Password reset functionality"
+		},
+		{
+			"name": "Service Module",
+			"item": [
+				{
+					"name": "Service Categories",
+					"item": [
+						{
+							"name": "List Categories",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/service-categories",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"service-categories"
+									]
+								},
+								"description": "List all service categories"
+							},
+							"response": []
+						},
+						{
+							"name": "Show Category",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/service-categories/:id",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"service-categories",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id"
+										}
+									]
+								},
+								"description": "Show specific category details"
+							},
+							"response": []
+						},
+						{
+							"name": "Create Category",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{auth_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Photography\",\n    \"description\": \"Professional photography services\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/service-categories",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"service-categories"
+									]
+								},
+								"description": "Create new category (Admin)"
+							},
+							"response": []
+						},
+						{
+							"name": "Update Category",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{auth_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Wedding Photography\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/service-categories/:id",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"service-categories",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id"
+										}
+									]
+								},
+								"description": "Update category (Admin)"
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Category",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{auth_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/service-categories/:id",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"service-categories",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id"
+										}
+									]
+								},
+								"description": "Delete category (Admin)"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Services",
+					"item": [
+						{
+							"name": "List Services",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/services",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"services"
+									],
+									"query": [
+										{
+											"key": "category_id",
+											"value": "1",
+											"disabled": true
+										},
+										{
+											"key": "location",
+											"value": "New York",
+											"disabled": true
+										},
+										{
+											"key": "min_price",
+											"value": "100",
+											"disabled": true
+										},
+										{
+											"key": "max_price",
+											"value": "1000",
+											"disabled": true
+										}
+									]
+								},
+								"description": "List all services"
+							},
+							"response": []
+						},
+						{
+							"name": "Show Service",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/services/:id",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"services",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id"
+										}
+									]
+								},
+								"description": "Show specific service details"
+							},
+							"response": []
+						},
+						{
+							"name": "My Services",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{auth_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/my-services",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"my-services"
+									]
+								},
+								"description": "List provider's own services"
+							},
+							"response": []
+						},
+						{
+							"name": "Create Service",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{auth_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"category_id\": 1,\n    \"name\": \"Premium Wedding Photography\",\n    \"description\": \"Full day wedding coverage\",\n    \"base_price\": 1500.0,\n    \"price_unit\": \"fixed\",\n    \"location\": \"New York, NY\",\n    \"is_active\": true\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/services",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"services"
+									]
+								},
+								"description": "Create new service (Provider)"
+							},
+							"response": []
+						},
+						{
+							"name": "Update Service",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{auth_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"base_price\": 1600.0,\n    \"is_active\": false\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/services/:id",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"services",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id"
+										}
+									]
+								},
+								"description": "Update service (Provider)"
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Service",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{auth_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/services/:id",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"services",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id"
+										}
+									]
+								},
+								"description": "Delete service (Provider)"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Venues",
+					"item": [
+						{
+							"name": "List Venues",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/venues",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"venues"
+									],
+									"query": [
+										{
+											"key": "location",
+											"value": "New York",
+											"disabled": true
+										},
+										{
+											"key": "min_capacity",
+											"value": "50",
+											"disabled": true
+										},
+										{
+											"key": "max_capacity",
+											"value": "500",
+											"disabled": true
+										}
+									]
+								},
+								"description": "List all venues"
+							},
+							"response": []
+						},
+						{
+							"name": "Show Venue",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/venues/:id",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"venues",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id"
+										}
+									]
+								},
+								"description": "Show specific venue details"
+							},
+							"response": []
+						},
+						{
+							"name": "My Venues",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{auth_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/my-venues",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"my-venues"
+									]
+								},
+								"description": "List provider's own venues"
+							},
+							"response": []
+						},
+						{
+							"name": "Create Venue",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{auth_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Grand Ballroom\",\n    \"description\": \"Luxurious ballroom for large events\",\n    \"capacity\": 500,\n    \"base_price\": 5000.0,\n    \"price_unit\": \"fixed\",\n    \"location\": \"Manhattan, NY\",\n    \"is_active\": true\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/venues",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"venues"
+									]
+								},
+								"description": "Create new venue (Provider)"
+							},
+							"response": []
+						},
+						{
+							"name": "Update Venue",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{auth_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"base_price\": 5500.0\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/venues/:id",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"venues",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id"
+										}
+									]
+								},
+								"description": "Update venue (Provider)"
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Venue",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{auth_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/venues/:id",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"venues",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id"
+										}
+									]
+								},
+								"description": "Delete venue (Provider)"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Packages",
+					"item": [
+						{
+							"name": "List Packages",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/packages",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"packages"
+									]
+								},
+								"description": "List all packages"
+							},
+							"response": []
+						},
+						{
+							"name": "Show Package",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/packages/:id",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"packages",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id"
+										}
+									]
+								},
+								"description": "Show specific package details"
+							},
+							"response": []
+						},
+						{
+							"name": "Create Package",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{auth_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Gold Wedding Package\",\n    \"description\": \"Complete wedding package including photography and venue\",\n    \"price\": 6000.0,\n    \"is_active\": true\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/packages",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"packages"
+									]
+								},
+								"description": "Create new package (Provider)"
+							},
+							"response": []
+						},
+						{
+							"name": "Update Package",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{auth_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"price\": 6200.0\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/packages/:id",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"packages",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id"
+										}
+									]
+								},
+								"description": "Update package (Provider)"
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Package",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{auth_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/packages/:id",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"packages",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id"
+										}
+									]
+								},
+								"description": "Delete package (Provider)"
+							},
+							"response": []
+						},
+						{
+							"name": "Add Item to Package",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{auth_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"service_id\": 1,\n    \"quantity\": 1,\n    \"price_adjustment\": -100.0\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/packages/:id/items",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"packages",
+										":id",
+										"items"
+									],
+									"variable": [
+										{
+											"key": "id"
+										}
+									]
+								},
+								"description": "Add service to package"
+							},
+							"response": []
+						},
+						{
+							"name": "Remove Item from Package",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{auth_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/packages/:packageId/items/:itemId",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"packages",
+										":packageId",
+										"items",
+										":itemId"
+									],
+									"variable": [
+										{
+											"key": "packageId"
+										},
+										{
+											"key": "itemId"
+										}
+									]
+								},
+								"description": "Remove item from package"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Reviews",
+					"item": [
+						{
+							"name": "List Reviews",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/reviews?reviewable_type=service&reviewable_id=1",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"reviews"
+									],
+									"query": [
+										{
+											"key": "reviewable_type",
+											"value": "service"
+										},
+										{
+											"key": "reviewable_id",
+											"value": "1"
+										}
+									]
+								},
+								"description": "List reviews"
+							},
+							"response": []
+						},
+						{
+							"name": "Create Review",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{auth_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"reviewable_type\": \"service\",\n    \"reviewable_id\": 1,\n    \"rating\": 5,\n    \"comment\": \"Excellent service!\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/reviews",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"reviews"
+									]
+								},
+								"description": "Create new review (Customer)"
+							},
+							"response": []
+						},
+						{
+							"name": "Update Review",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{auth_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"rating\": 4,\n    \"comment\": \"Good service, but expensive.\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/reviews/:id",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"reviews",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id"
+										}
+									]
+								},
+								"description": "Update review (Customer)"
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Review",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{auth_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/reviews/:id",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"reviews",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id"
+										}
+									]
+								},
+								"description": "Delete review (Customer)"
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://eventplanning.test/api",
+			"type": "string"
+		},
+		{
+			"key": "auth_token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "user_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "user_email",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
