@@ -15,6 +15,13 @@ class RegisterRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation()
+    {
+        $this->merge([
+            'role' => strtolower($this->role)
+        ]);
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -26,7 +33,7 @@ class RegisterRequest extends FormRequest
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'confirmed', Password::defaults()],
-            'role' => ['sometimes', 'string', 'in:customer,provider,admin'],
+            'role' => ['sometimes', 'string', 'in:customer,provider'],
         ];
     }
 
