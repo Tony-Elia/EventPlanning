@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
+use App\Http\Requests\UpdateProfileRequest;
 use App\Models\User;
 use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
@@ -29,11 +30,7 @@ class AuthController extends Controller
 
         // Assign default role (customer) or requested role if valid
         $role = $request->input('role', 'customer');
-        if (in_array($role, ['customer', 'provider', 'admin'])) {
-            $user->assignRole($role);
-        } else {
-            $user->assignRole('customer');
-        }
+        $user->assignRole($role);
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
@@ -95,19 +92,16 @@ class AuthController extends Controller
     /**
      * Get authenticated user.
      */
-    public function user(Request $request): JsonResponse
+    public function getAuthUser(Request $request): JsonResponse
     {
-        return $this->successResponse([
-            'user' => [
-                'id' => $request->user()->id,
-                'name' => $request->user()->name,
-                'email' => $request->user()->email,
-                'roles' => $request->user()->getRoleNames(),
-                'permissions' => $request->user()->getAllPermissions()->pluck('name'),
-                'email_verified_at' => $request->user()->email_verified_at,
-                'created_at' => $request->user()->created_at,
-            ],
-        ]);
+        return $this->successResponse(auth()->user()->toResource());
+    }
+
+    public function updateUser(UpdateProfileRequest $request): JsonResponse
+    {
+        $user = auth()->user();
+        if($user->update($request->validated())) return $this->successResponse($user->toResource(), 'Profile updated successfully');
+        return $this->errorResponse('Unable to update user profile');
     }
 
     /**
@@ -116,7 +110,7 @@ class AuthController extends Controller
     public function refresh(Request $request): JsonResponse
     {
         $user = $request->user();
-        
+
         // Revoke current token
         $request->user()->currentAccessToken()->delete();
 

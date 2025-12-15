@@ -16,8 +16,11 @@ Route::prefix('auth')->group(function () {
 // Protected routes (authentication required)
 Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('auth')->group(function () {
-        Route::post('/logout', [AuthController::class, 'logout']);
-        Route::get('/user', [AuthController::class, 'user']);
-        Route::post('/refresh', [AuthController::class, 'refresh']);
+        Route::controller(AuthController::class)->group(function () {
+            Route::post('/logout', 'logout');
+            Route::get('/user', 'getAuthUser');
+            Route::put('/user', 'updateUser');
+            Route::post('/refresh', 'refresh');
+        });
     });
 });
