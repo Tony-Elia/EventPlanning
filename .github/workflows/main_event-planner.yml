@@ -1,70 +1,40 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-
-name: Build and deploy PHP app to Azure Web App - event-planner
+name: Deploy to Server
 
 on:
   push:
-    branches:
-      - main
-  workflow_dispatch:
+    branches: [ "main" ]
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read #This is required for actions/checkout
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.4'
-
-      - name: Check if composer.json exists
-        id: check_files
-        uses: andstor/file-existence-action@v1
-        with:
-          files: 'composer.json'
-
-      - name: Run composer install if composer.json exists
-        if: steps.check_files.outputs.files_exists == 'true'
-        run: composer validate --no-check-publish && composer install --prefer-dist --no-progress
-
-
-      - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v4
-        with:
-          name: php-app
-          path: .
-
   deploy:
     runs-on: ubuntu-latest
-    needs: build
-    permissions:
-      id-token: write #This is required for requesting the JWT
-      contents: read #This is required for actions/checkout
-
     steps:
-      - name: Download artifact from build job
-        uses: actions/download-artifact@v4
+      - name: SSH and Deploy
+        uses: appleboy/ssh-action@v1.0.3
         with:
-          name: php-app
-      
-      - name: Login to Azure
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_D904F678071E45FFAAE8EC70DA8E570B }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_BD07504A01634FCDAB58E85AAA80FCFF }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_963B8E12ABCE4005801FA99F9D355181 }}
-
-      - name: 'Deploy to Azure Web App'
-        uses: azure/webapps-deploy@v3
-        id: deploy-to-webapp
-        with:
-          app-name: 'event-planner'
-          slot-name: 'Production'
-          package: .
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          port: ${{ secrets.SERVER_PORT }} # Uses your custom port
           
+          # 60s timeout is sometimes too short for shared hosting, bumping to 2 mins
+          command_timeout: 2m 
+          
+          script: |
+            # 1. Navigate to your project folder
+            cd /home/u363443506/domains/elshamel.online/public_html/eventak
+
+            # 2. Pull the latest code
+            git pull origin main
+
+            # 3. Install Dependencies
+            composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev
+
+            # 4. Migrate Database
+            php artisan migrate --force
+
+            # 5. Clear Caches
+            php artisan optimize:clear
+
+            php artisan optimize
+            
+            echo "Deployed Successfully!"
