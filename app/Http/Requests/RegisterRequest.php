@@ -34,6 +34,7 @@ class RegisterRequest extends FormRequest
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'confirmed', Password::defaults()],
             'role' => ['sometimes', 'string', 'in:customer,provider'],
+            'avatar' => ['sometimes', 'image', 'max:2048'],
         ];
     }
 
