@@ -6,12 +6,16 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\UpdateProfileRequest;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
+use Spatie\MediaLibrary\MediaCollections\Exceptions\FileDoesNotExist;
+use Spatie\MediaLibrary\MediaCollections\Exceptions\FileIsTooBig;
 
 class AuthController extends Controller
 {
@@ -28,6 +32,9 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
+        if($request->has('avatar'))
+            $this->handleUserAvatar($request);
+
         // Assign default role (customer) or requested role if valid
         $role = $request->input('role', 'customer');
         $user->assignRole($role);
@@ -35,16 +42,8 @@ class AuthController extends Controller
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return $this->createdResponse([
-            'user' => [
-                'id' => $user->id,
-                'name' => $user->name,
-                'email' => $user->email,
-                'roles' => $user->getRoleNames(),
-                'permissions' => $user->getAllPermissions()->pluck('name'),
-                'created_at' => $user->created_at,
-            ],
-            'access_token' => $token,
-            'token_type' => 'Bearer',
+            'user' => $user->toResource(),
+            'access_token' => $token
         ], 'User registered successfully');
     }
 
@@ -67,15 +66,8 @@ class AuthController extends Controller
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return $this->successResponse([
-            'user' => [
-                'id' => $user->id,
-                'name' => $user->name,
-                'email' => $user->email,
-                'roles' => $user->getRoleNames(),
-                'permissions' => $user->getAllPermissions()->pluck('name'),
-            ],
+            'user' => $user->toResource(),
             'access_token' => $token,
-            'token_type' => 'Bearer',
         ], 'Login successful');
     }
 
@@ -100,7 +92,11 @@ class AuthController extends Controller
     public function updateUser(UpdateProfileRequest $request): JsonResponse
     {
         $user = auth()->user();
-        if($user->update($request->validated())) return $this->successResponse($user->toResource(), 'Profile updated successfully');
+        if($user->update($request->validated())) {
+            if($request->has('avatar'))
+                $this->handleUserAvatar($request);
+            return $this->successResponse($user->toResource(), 'Profile updated successfully');
+        }
         return $this->errorResponse('Unable to update user profile');
     }
 
@@ -121,5 +117,14 @@ class AuthController extends Controller
             'access_token' => $token,
             'token_type' => 'Bearer',
         ], 'Token refreshed successfully');
+    }
+
+    private function handleUserAvatar(Request $request)
+    {
+        try {
+            $request->user()->addMediaFromRequest('avatar')->toMediaCollection('avatar');
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+        }
     }
 }

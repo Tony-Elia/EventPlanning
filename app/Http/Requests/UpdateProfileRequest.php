@@ -14,7 +14,8 @@ class UpdateProfileRequest extends FormRequest
             'email' => ['sometimes', 'email', 'max:254', 'unique:users,email,' . $this->user()->id],
             'current_password' => ['required_with:password', 'current_password'],
             'password' => ['required_with:current_password', 'same:confirm_password', Password::default()],
-            'confirm_password' => ['required_with:password', 'same:password']
+            'confirm_password' => ['required_with:password', 'same:password'],
+            'avatar' => ['image', 'sometimes', 'max:2048'],
         ];
     }
 
