@@ -21,6 +21,7 @@ class ServiceController extends Controller
     public function index(Request $request)
     {
         $query = Service::with(['provider', 'category'])
+            ->withCount('reviews')
             ->where('is_active', true);
 
         // Filter by type
@@ -58,13 +59,14 @@ class ServiceController extends Controller
     public function show($id)
     {
         $service = Service::with(['provider', 'category', 'reviews.user'])
+            ->withCount('reviews')
             ->find($id);
 
         if (!$service) {
             return $this->notFoundResponse('Service not found');
         }
 
-        return $this->successResponse($service->toResource());
+        return $this->successResponse($service);
     }
 
     /**
@@ -78,7 +80,7 @@ class ServiceController extends Controller
 
         $service = Service::create($validated);
 
-        return $this->createdResponse($service->toResource(), 'Service created successfully');
+        return $this->createdResponse($service, 'Service created successfully');
     }
 
     /**
@@ -87,7 +89,7 @@ class ServiceController extends Controller
      */
     public function update(ServiceRequest $request, $id)
     {
-        $service = Service::find($id);
+        $service = Service::withCount('reviews')->find($id);
 
         if (!$service) {
             return $this->notFoundResponse('Service not found');
@@ -100,7 +102,7 @@ class ServiceController extends Controller
 
         $service->update($request->validated());
 
-        return $this->successResponse($service->toResource(), 'Service updated successfully');
+        return $this->successResponse($service, 'Service updated successfully');
     }
 
     /**
@@ -132,6 +134,7 @@ class ServiceController extends Controller
     public function myServices(Request $request)
     {
         $services = Service::with(['category'])
+            ->withCount('reviews')
             ->where('provider_id', $request->user()->id)
             ->paginate(15);
 

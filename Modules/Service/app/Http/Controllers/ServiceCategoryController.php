@@ -18,7 +18,7 @@ class ServiceCategoryController extends Controller
      */
     public function index()
     {
-        $categories = ServiceCategory::query();
+        $categories = ServiceCategory::query()->withCount('services');
         if(request('services', false)) {
             $categories->with('services');
         }
@@ -31,7 +31,7 @@ class ServiceCategoryController extends Controller
      */
     public function show($id)
     {
-        $category = ServiceCategory::with('services')->find($id);
+        $category = ServiceCategory::with('services')->withCount('services')->find($id);
         if (!$category) {
             return $this->notFoundResponse('Service category not found');
         }
@@ -59,7 +59,7 @@ class ServiceCategoryController extends Controller
      */
     public function update(ServiceCategoryRequest $request, $id)
     {
-        $category = ServiceCategory::find($id);
+        $category = ServiceCategory::withCount('services')->find($id);
 
         if (!$category) {
             return $this->notFoundResponse('Service category not found');

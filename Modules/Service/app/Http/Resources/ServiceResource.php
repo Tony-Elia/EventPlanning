@@ -26,7 +26,7 @@ class ServiceResource extends JsonResource
             'latitude' => $this->latitude,
             'longitude' => $this->longitude,
             'amenities' => $this->amenities,
-            'reviews_count' => $this->reviews_count,
+            'reviews_count' => $this->whenHas('reviews_count'),
 
             'category_id' => new ServiceCategoryResource($this->whenLoaded('category')),
 

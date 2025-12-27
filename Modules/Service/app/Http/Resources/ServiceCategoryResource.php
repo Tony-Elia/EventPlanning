@@ -16,7 +16,7 @@ class ServiceCategoryResource extends JsonResource
             'name' => $this->name,
             'slug' => $this->slug,
             'description' => $this->description,
-            'services_count' => $this->services_count,
+            'services_count' => $this->whenHas('services_count'),
 
             'services' => ServiceResource::collection($this->whenLoaded('services')),
         ];
