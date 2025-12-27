@@ -56,4 +56,9 @@ class Service extends Model
     {
         return $this->morphMany(Review::class, 'reviewable');
     }
+
+    public function getReviewsCountAttribute(): int
+    {
+        return $this->reviews()->count();
+    }
 }

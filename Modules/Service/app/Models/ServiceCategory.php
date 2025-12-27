@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class ServiceCategory extends Model
 {
-    use HasFactory;
 
     protected $fillable = [
         'name',
@@ -18,16 +17,14 @@ class ServiceCategory extends Model
     /**
      * Get all services in this category.
      */
-    public function services()
+    public function services(): ServiceCategory|\Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Service::class, 'category_id');
     }
 
-    /**
-     * Get all venues in this category.
-     */
-    public function venues()
+    public function getServicesCountAttribute(): int
     {
-        return $this->hasMany(Venue::class, 'category_id');
+        return $this->services()->count();
     }
+
 }

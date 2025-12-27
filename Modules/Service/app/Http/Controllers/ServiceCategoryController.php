@@ -4,9 +4,9 @@ namespace Modules\Service\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Traits\ApiResponse;
+use Modules\Service\Http\Resources\ServiceCategoryResource;
 use Modules\Service\Models\ServiceCategory;
-use Modules\Service\Http\Requests\StoreServiceCategoryRequest;
-use Modules\Service\Http\Requests\UpdateServiceCategoryRequest;
+use Modules\Service\Http\Requests\ServiceCategoryRequest;
 use Illuminate\Support\Str;
 
 class ServiceCategoryController extends Controller
@@ -22,8 +22,8 @@ class ServiceCategoryController extends Controller
         if(request('services', false)) {
             $categories->with('services');
         }
-        $categories = $categories->get();
-        return $this->successResponse($categories);
+        $categories = $categories->paginate(15);
+        return $this->successResponse(ServiceCategoryResource::collection($categories));
     }
 
     /**
@@ -35,29 +35,29 @@ class ServiceCategoryController extends Controller
         if (!$category) {
             return $this->notFoundResponse('Service category not found');
         }
-        
-        return $this->successResponse($category);
+
+        return $this->successResponse($category->toResource());
     }
 
     /**
      * Store a newly created service category.
      * Admin only.
      */
-    public function store(StoreServiceCategoryRequest $request)
+    public function store(ServiceCategoryRequest $request)
     {
         $validated = $request->validated();
         $validated['slug'] = Str::slug($validated['name']);
 
         $category = ServiceCategory::create($validated);
 
-        return $this->createdResponse($category, 'Service category created successfully');
+        return $this->createdResponse($category->toResource(), 'Service category created successfully');
     }
 
     /**
      * Update the specified service category.
      * Admin only.
      */
-    public function update(UpdateServiceCategoryRequest $request, $id)
+    public function update(ServiceCategoryRequest $request, $id)
     {
         $category = ServiceCategory::find($id);
 
@@ -73,7 +73,7 @@ class ServiceCategoryController extends Controller
 
         $category->update($validated);
 
-        return $this->successResponse($category, 'Service category updated successfully');
+        return $this->successResponse($category->toResource(), 'Service category updated successfully');
     }
 
     /**
