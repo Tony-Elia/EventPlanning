@@ -23,6 +23,11 @@ class ServiceController extends Controller
         $query = Service::with(['provider', 'category'])
             ->where('is_active', true);
 
+        // Filter by type
+        if ($request->has('type')) {
+            $query->where('type', $request->get('type'));
+        }
+
         // Filter by category
         if ($request->has('category_id')) {
             $query->where('category_id', $request->category_id);
