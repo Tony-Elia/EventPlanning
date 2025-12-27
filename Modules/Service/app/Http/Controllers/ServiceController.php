@@ -4,8 +4,9 @@ namespace Modules\Service\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Traits\ApiResponse;
+use Modules\Service\Http\Requests\ServiceRequest;
+use Modules\Service\Http\Resources\ServiceResource;
 use Modules\Service\Models\Service;
-use Modules\Service\Http\Requests\StoreServiceRequest;
 use Modules\Service\Http\Requests\UpdateServiceRequest;
 use Illuminate\Http\Request;
 
@@ -42,7 +43,7 @@ class ServiceController extends Controller
 
         $services = $query->paginate(15);
 
-        return $this->successResponse($services);
+        return $this->successResponse(ServiceResource::collection($services));
     }
 
     /**
@@ -58,28 +59,28 @@ class ServiceController extends Controller
             return $this->notFoundResponse('Service not found');
         }
 
-        return $this->successResponse($service);
+        return $this->successResponse($service->toResource());
     }
 
     /**
      * Store a newly created service.
      * Provider only.
      */
-    public function store(StoreServiceRequest $request)
+    public function store(ServiceRequest $request)
     {
         $validated = $request->validated();
         $validated['provider_id'] = $request->user()->id;
 
         $service = Service::create($validated);
 
-        return $this->createdResponse($service, 'Service created successfully');
+        return $this->createdResponse($service->toResource(), 'Service created successfully');
     }
 
     /**
      * Update the specified service.
      * Provider only (own services).
      */
-    public function update(UpdateServiceRequest $request, $id)
+    public function update(ServiceRequest $request, $id)
     {
         $service = Service::find($id);
 
@@ -94,7 +95,7 @@ class ServiceController extends Controller
 
         $service->update($request->validated());
 
-        return $this->successResponse($service, 'Service updated successfully');
+        return $this->successResponse($service->toResource(), 'Service updated successfully');
     }
 
     /**
@@ -129,6 +130,6 @@ class ServiceController extends Controller
             ->where('provider_id', $request->user()->id)
             ->paginate(15);
 
-        return $this->successResponse($services);
+        return $this->successResponse(ServiceResource::collection($services));
     }
 }

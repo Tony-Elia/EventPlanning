@@ -37,21 +37,15 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::put('service-categories/{id}', [ServiceCategoryController::class, 'update']);
         Route::delete('service-categories/{id}', [ServiceCategoryController::class, 'destroy']);
     });
-    
+
     Route::middleware(['role:provider'])->group(function () {
-        
+
         // Services (Provider)
         Route::post('services', [ServiceController::class, 'store']);
         Route::put('services/{id}', [ServiceController::class, 'update']);
         Route::delete('services/{id}', [ServiceController::class, 'destroy']);
         Route::get('my-services', [ServiceController::class, 'myServices']);
-        
-        // Venues (Provider)
-        Route::post('venues', [VenueController::class, 'store']);
-        Route::put('venues/{id}', [VenueController::class, 'update']);
-        Route::delete('venues/{id}', [VenueController::class, 'destroy']);
-        Route::get('my-venues', [VenueController::class, 'myVenues']);
-        
+
         // Packages (Provider)
         Route::post('packages', [PackageController::class, 'store']);
         Route::put('packages/{id}', [PackageController::class, 'update']);
@@ -59,7 +53,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('packages/{id}/items', [PackageController::class, 'addItem']);
         Route::delete('packages/{packageId}/items/{itemId}', [PackageController::class, 'removeItem']);
     });
-    
+
     Route::middleware('role:customer')->group(function () {
         // Reviews (Customer)
         Route::post('reviews', [ReviewController::class, 'store']);

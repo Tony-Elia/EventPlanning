@@ -7,21 +7,38 @@ use Illuminate\Http\JsonResponse;
 trait ApiResponse
 {
     /**
-     * Return a success JSON response.
-     *
-     * @param  mixed  $data
-     * @param  string  $message
-     * @param  int  $code
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function successResponse($data = null, string $message = 'Success', int $code = 200): JsonResponse
+    * Return a success JSON response.
+    *
+    * @param mixed|null $data
+    * @param  string  $message
+    * @param  int  $code
+    * @return \Illuminate\Http\JsonResponse
+    */
+    public function successResponse(mixed $data = null, string $message = 'Success', int $code = 200): JsonResponse
     {
         $response = [
             'success' => true,
             'message' => $message,
         ];
 
-        if ($data !== null) {
+        // 1. Check if data is an API Resource (e.g., ServiceResource::collection(...))
+        if ($data instanceof \Illuminate\Http\Resources\Json\JsonResource) {
+            // Convert the resource to an array, including pagination (meta & links)
+            $resourceData = $data->response()->getData(true);
+
+            // Assign 'data'
+            $response['data'] = $resourceData['data'] ?? $data;
+
+            // Merge 'meta' and 'links' if they exist (Pagination detected)
+            if (isset($resourceData['meta'])) {
+                $response['meta'] = $resourceData['meta'];
+            }
+            if (isset($resourceData['links'])) {
+                $response['links'] = $resourceData['links'];
+            }
+        }
+        // 2. Handle normal data (arrays, objects, or null)
+        elseif ($data !== null) {
             $response['data'] = $data;
         }
 

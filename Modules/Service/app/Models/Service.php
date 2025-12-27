@@ -3,9 +3,9 @@
 namespace Modules\Service\Models;
 
 use App\Models\User;
-use App\ServiceType;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Modules\Service\Enums\ServiceType;
 
 class Service extends Model
 {
