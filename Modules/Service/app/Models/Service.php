@@ -9,8 +9,6 @@ use Modules\Service\Enums\ServiceType;
 
 class Service extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
         'provider_id',
         'category_id',
