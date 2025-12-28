@@ -2,7 +2,9 @@
 
 namespace App\Traits;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 trait ApiResponse
 {
@@ -35,6 +37,28 @@ trait ApiResponse
             }
             if (isset($resourceData['links'])) {
                 $response['links'] = $resourceData['links'];
+            }
+        }
+        elseif ($data instanceof Model) {
+            try {
+                $response['data'] = $data->toResource();
+            } catch (\Exception $e) {
+                $response['data'] = $data;
+            }
+        }
+        // if the passed was paginated response
+        elseif ($data instanceof LengthAwarePaginator) {
+            try {
+                $resourceData = $data->toResourceCollection()->response()->getData(true);
+                $response['data'] = $resourceData['data'];
+                if (isset($resourceData['meta'])) {
+                    $response['meta'] = $resourceData['meta'];
+                }
+                if (isset($resourceData['links'])) {
+                    $response['links'] = $resourceData['links'];
+                }
+            } catch (\Throwable|\Exception $e) {
+                $response['data'] = $data;
             }
         }
         // 2. Handle normal data (arrays, objects, or null)

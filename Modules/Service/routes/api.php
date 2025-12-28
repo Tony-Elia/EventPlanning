@@ -47,10 +47,12 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('my-services', [ServiceController::class, 'myServices']);
 
         // Packages (Provider)
+        Route::get('my-packages', [PackageController::class, 'myPackages']);
         Route::post('packages', [PackageController::class, 'store']);
         Route::put('packages/{id}', [PackageController::class, 'update']);
         Route::delete('packages/{id}', [PackageController::class, 'destroy']);
         Route::post('packages/{id}/items', [PackageController::class, 'addItem']);
+        Route::put('packages/{packageId}/items/{itemId}', [PackageController::class, 'updatePackageItem']);
         Route::delete('packages/{packageId}/items/{itemId}', [PackageController::class, 'removeItem']);
     });
 

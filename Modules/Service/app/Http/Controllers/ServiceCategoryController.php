@@ -36,7 +36,7 @@ class ServiceCategoryController extends Controller
             return $this->notFoundResponse('Service category not found');
         }
 
-        return $this->successResponse($category->toResource());
+        return $this->successResponse($category);
     }
 
     /**
@@ -50,7 +50,7 @@ class ServiceCategoryController extends Controller
 
         $category = ServiceCategory::create($validated);
 
-        return $this->createdResponse($category->toResource(), 'Service category created successfully');
+        return $this->createdResponse($category, 'Service category created successfully');
     }
 
     /**
@@ -73,7 +73,7 @@ class ServiceCategoryController extends Controller
 
         $category->update($validated);
 
-        return $this->successResponse($category->toResource(), 'Service category updated successfully');
+        return $this->successResponse($category, 'Service category updated successfully');
     }
 
     /**

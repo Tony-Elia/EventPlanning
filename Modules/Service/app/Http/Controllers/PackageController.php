@@ -8,7 +8,7 @@ use Modules\Service\Models\ServicePackage;
 use Modules\Service\Models\PackageItem;
 use Modules\Service\Http\Requests\StorePackageRequest;
 use Modules\Service\Http\Requests\UpdatePackageRequest;
-use Modules\Service\Http\Requests\AddPackageItemRequest;
+use Modules\Service\Http\Requests\PackageItemRequest;
 use Illuminate\Http\Request;
 
 class PackageController extends Controller
@@ -21,7 +21,7 @@ class PackageController extends Controller
      */
     public function index(Request $request)
     {
-        $query = ServicePackage::with(['provider', 'items.service']);
+        $query = ServicePackage::query()->with(['provider', 'items.service'])->withCount('items');
 
         // Optionally filter by provider
         if ($request->has('provider_id')) {
@@ -40,6 +40,7 @@ class PackageController extends Controller
     public function show($id)
     {
         $package = ServicePackage::with(['provider', 'items.service'])
+            ->withCount('items')
             ->find($id);
 
         if (!$package) {
@@ -47,6 +48,14 @@ class PackageController extends Controller
         }
 
         return $this->successResponse($package);
+    }
+
+    public function myPackages(Request $request)
+    {
+        return $this->successResponse(ServicePackage::with(['provider', 'items.service'])
+            ->withCount('items')
+            ->where('provider_id', $request->user()->id)
+            ->paginate(15), 'Packages fetched successfully');
     }
 
     /**
@@ -57,10 +66,11 @@ class PackageController extends Controller
     {
         $validated = $request->validated();
         $validated['provider_id'] = $request->user()->id;
-
+        info('create package request: ', $validated['items']);
         $package = ServicePackage::create($validated);
+        $package->items()->createMany($validated['items']);
 
-        return $this->createdResponse($package, 'Package created successfully');
+        return $this->createdResponse($package->load('items.service'), 'Package created successfully');
     }
 
     /**
@@ -69,7 +79,7 @@ class PackageController extends Controller
      */
     public function update(UpdatePackageRequest $request, $id)
     {
-        $package = ServicePackage::find($id);
+        $package = ServicePackage::with('items')->withCount('items')->find($id);
 
         if (!$package) {
             return $this->notFoundResponse('Package not found');
@@ -83,6 +93,19 @@ class PackageController extends Controller
         $package->update($request->validated());
 
         return $this->successResponse($package, 'Package updated successfully');
+    }
+
+    public function updatePackageItem(PackageItemRequest $request, $packageId, $itemId)
+    {
+        $package_item = PackageItem::with('package')->find($itemId);
+
+        if(!$package_item || $package_item->package_id != $packageId)
+            return $this->notFoundResponse('Package Item Not Found');
+        if($package_item->package->provider_id != $request->user()->id)
+            return $this->forbiddenResponse('You are not authorized to update this package');
+
+        $package_item->update($request->validated());
+        return $this->successResponse($package_item, 'Package item updated successfully');
     }
 
     /**
@@ -111,7 +134,7 @@ class PackageController extends Controller
      * Add an item to a package.
      * Provider only (own packages).
      */
-    public function addItem(AddPackageItemRequest $request, $id)
+    public function addItem(PackageItemRequest $request, $id)
     {
         $package = ServicePackage::find($id);
 
